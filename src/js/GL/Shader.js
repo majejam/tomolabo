@@ -4,11 +4,27 @@ import Raf from '../utils/RAF.js'
 import viewport from '../utils/Viewport.js'
 
 export default class Shader {
-  constructor(engine, vert, frag, uniforms) {
+  constructor(engine, vert, frag, uniforms, params) {
     this.$engine = engine
     this.$vert = vert
     this.$frag = frag
     this.$uniforms = uniforms
+
+    this.viewport_factor = params.viewport_factor
+
+    if (params.hide_gui) GUI.dat.GUI.toggleHide()
+
+    this.defaultUniforms = {
+      u_time: { value: 0.0 },
+      u_resolution: {
+        value: new THREE.Vector2(
+          viewport.width * this.viewport_factor,
+          viewport.height * this.viewport_factor
+        ),
+      },
+    }
+
+    this.bannedUniforms = ['u_resolution', 'u_time']
 
     this._update = this.update.bind(this)
     this._onResize = this.onResize.bind(this)
@@ -17,6 +33,14 @@ export default class Shader {
   }
 
   init() {
+    this.setUniforms()
+
+    this.setShaderPlane()
+
+    this.setEvents()
+  }
+
+  setUniforms() {
     GUI.setFolder('Uniforms')
 
     for (const key in this.$uniforms) {
@@ -24,20 +48,17 @@ export default class Shader {
         default: this.$uniforms[key].value,
       })
     }
+  }
 
-    this.$uniforms.u_resolution = {
-      value: new THREE.Vector2(viewport.width * 4, viewport.height * 4),
-    }
+  setShaderPlane() {
     this.plane = new THREE.Mesh(
       new THREE.PlaneGeometry(1.5, 1.5),
       new THREE.ShaderMaterial({
-        uniforms: this.$uniforms,
+        uniforms: { ...this.$uniforms, ...this.defaultUniforms },
         vertexShader: this.$vert,
         fragmentShader: this.$frag,
       })
     )
-
-    this.setEvents()
     this.$engine.scene.add(this.plane)
   }
 
@@ -52,13 +73,17 @@ export default class Shader {
   }
 
   onResize() {
-    this.$uniforms.u_resolution.value = new THREE.Vector2(viewport.width * 4, viewport.height * 4)
+    this.defaultUniforms.u_resolution.value = new THREE.Vector2(
+      viewport.width * this.viewport_factor,
+      viewport.height * this.viewport_factor
+    )
   }
 
   update() {
-    GUI.datas.Uniforms['u_time'] += 0.004
+    this.plane.material.uniforms['u_time'].value += 0.004
     for (const key in this.$uniforms) {
-      if (key != 'u_resolution') this.plane.material.uniforms[key].value = GUI.datas.Uniforms[key]
+      if (!this.bannedUniforms.includes(key))
+        this.plane.material.uniforms[key].value = GUI.datas.Uniforms[key]
     }
   }
 }
