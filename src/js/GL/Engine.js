@@ -2,9 +2,9 @@ import Raf from '../utils/RAF.js'
 import GUI from '../utils/GUI.js'
 import viewport from '../utils/Viewport.js'
 import * as THREE from 'three'
-class Engine {
-  constructor() {
-    this.$el = null
+export default class Engine {
+  constructor(el) {
+    this.$el = el
     this.scene = null
     this.camera = null
     this.renderer = null
@@ -12,11 +12,11 @@ class Engine {
 
     this._update = this.update.bind(this)
     this._onResize = this.onResize.bind(this)
+
+    this.init()
   }
 
-  init(el) {
-    this.$el = el
-
+  init() {
     this.setupCamera()
 
     this.setupScene()
@@ -91,7 +91,3 @@ class Engine {
     window.removeEventListener('resize', this._onResize)
   }
 }
-
-let EngineInstance = new Engine()
-
-export default EngineInstance
