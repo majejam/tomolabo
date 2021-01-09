@@ -4,10 +4,11 @@ import Raf from '../utils/RAF.js'
 import viewport from '../utils/Viewport.js'
 
 export default class Shader {
-  constructor(engine, vert, frag, uniforms, params) {
+  constructor(engine, vert, frag, name, uniforms, params) {
     this.$engine = engine
     this.$vert = vert
     this.$frag = frag
+    this.$name = name
     this.$uniforms = uniforms
 
     this.viewport_factor = params.viewport_factor
@@ -41,10 +42,10 @@ export default class Shader {
   }
 
   setUniforms() {
-    GUI.setFolder('Uniforms')
+    GUI.setFolder(this.$name)
 
     for (const key in this.$uniforms) {
-      GUI.addValue('Uniforms', `${key}`, {
+      GUI.addValue(this.$name, `${key}`, {
         default: this.$uniforms[key].value,
       })
     }
@@ -83,7 +84,7 @@ export default class Shader {
     this.plane.material.uniforms['u_time'].value += 0.004
     for (const key in this.$uniforms) {
       if (!this.bannedUniforms.includes(key))
-        this.plane.material.uniforms[key].value = GUI.datas.Uniforms[key]
+        this.plane.material.uniforms[key].value = GUI.datas[this.$name][key]
     }
   }
 }
