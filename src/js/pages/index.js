@@ -1,15 +1,20 @@
 import Engine from '../GL/Engine'
 import Shader from '../GL/Shader'
+import * as THREE from 'three'
+import Post from '../GL/Post'
 
 import vert1 from '../shaders/vert.glsl'
+import frag1 from '../shaders/frag.glsl'
 import frag2 from '../shaders/frag2.glsl'
-
-const engine = new Engine(document.querySelector('canvas'))
+import BarrelDistortion from '../shaders/post/BarrelDistortion.glsl'
+import ChromaAbberation from '../shaders/post/ChromaAbberation.glsl'
+import ChromaBarrel from '../shaders/post/ChromaBarrel.glsl'
 
 new Shader(
-  engine,
+  new Engine(document.querySelector('.sh-1-c')),
   vert1,
-  frag2,
+  frag1,
+  'sh-1',
   {
     u_color_spacing: { value: 0.04 },
     u_color_brightness: { value: 0.3 },
@@ -21,3 +26,34 @@ new Shader(
     hide_gui: false,
   }
 )
+
+new Shader(
+  new Engine(document.querySelector('.sh-2-c')),
+  vert1,
+  frag2,
+  'sh-2',
+  {
+    u_color_spacing: { value: -0.1 },
+    u_color_brightness: { value: 0.3 },
+    u_color_delta: { value: 1.4 },
+    u_color_opacity: { value: 0.1 },
+  },
+  {
+    viewport_factor: 4,
+    hide_gui: false,
+  }
+)
+
+new Post(new Engine(document.querySelector('.ps-1-c'), true), BarrelDistortion, 'ps-1', {
+  u_k1: new THREE.Uniform(1.0),
+  u_k2: new THREE.Uniform(0.0),
+})
+
+new Post(new Engine(document.querySelector('.ps-2-c'), true), ChromaAbberation, 'ps-2', {
+  u_force: new THREE.Uniform(1.0),
+})
+
+new Post(new Engine(document.querySelector('.ps-3-c'), true), ChromaBarrel, 'ps-3', {
+  u_amount: new THREE.Uniform(1.0),
+  u_max_distort: new THREE.Uniform(2.2),
+})
