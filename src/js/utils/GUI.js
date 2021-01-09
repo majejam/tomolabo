@@ -54,14 +54,15 @@ class GUI {
       return this.warn(`The variable "${variableName}" already exist`)
 
     this.datas[folderName][variableName] = values.default
-
-    this.folders[folderName]
-      .add(this.datas[folderName], variableName, values.min, values.max, values.step)
-      .onChange(cb)
+    if (typeof values.default === 'object')
+      this.folders[folderName].addColor(this.datas[folderName], variableName).onChange(cb)
+    else
+      this.folders[folderName]
+        .add(this.datas[folderName], variableName, values.min, values.max, values.step)
+        .onChange(cb)
 
     return this.datas[folderName][variableName]
   }
-
   warn(msg) {
     console.warn(msg)
   }

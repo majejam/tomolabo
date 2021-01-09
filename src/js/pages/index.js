@@ -8,10 +8,14 @@ import frag1 from '../shaders/frag.glsl'
 import frag2 from '../shaders/frag2.glsl'
 import BarrelDistortion from '../shaders/post/BarrelDistortion.glsl'
 import ChromaAbberation from '../shaders/post/ChromaAbberation.glsl'
+import ChromaAbberation_2 from '../shaders/post/ChromaAbberation_2.glsl'
 import ChromaBarrel from '../shaders/post/ChromaBarrel.glsl'
+import Glitch from '../shaders/post/Glitch.glsl'
+import Vignette from '../shaders/post/Vignette.glsl'
 
+const engine_test = new Engine(document.querySelector('.sh-1-c'))
 new Shader(
-  new Engine(document.querySelector('.sh-1-c')),
+  engine_test,
   vert1,
   frag1,
   'sh-1',
@@ -26,6 +30,10 @@ new Shader(
     hide_gui: false,
   }
 )
+
+new Post(engine_test, Glitch, 'ps-1-1', {
+  u_amount: new THREE.Uniform(1.0),
+})
 
 new Shader(
   new Engine(document.querySelector('.sh-2-c')),
@@ -56,4 +64,17 @@ new Post(new Engine(document.querySelector('.ps-2-c'), true), ChromaAbberation, 
 new Post(new Engine(document.querySelector('.ps-3-c'), true), ChromaBarrel, 'ps-3', {
   u_amount: new THREE.Uniform(1.0),
   u_max_distort: new THREE.Uniform(2.2),
+})
+
+new Post(new Engine(document.querySelector('.ps-4-c'), true), Glitch, 'ps-4', {
+  u_amount: new THREE.Uniform(1.0),
+})
+
+new Post(new Engine(document.querySelector('.ps-5-c'), true), ChromaAbberation_2, 'ps-5', {
+  u_force: new THREE.Uniform(0.0),
+})
+
+new Post(new Engine(document.querySelector('.ps-6-c'), true), Vignette, 'ps-6', {
+  u_offset: new THREE.Uniform(0.0),
+  u_darkness: new THREE.Uniform(0.7),
 })

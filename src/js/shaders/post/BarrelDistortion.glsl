@@ -24,5 +24,15 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 
     uvTemp = 0.5 * (uvTemp * 0.5 + 1.0);
 
-    outputColor = texture(inputBuffer, uvTemp);
+    
+	
+    vec3 col;
+    col.r = texture( inputBuffer, vec2(uvTemp.x+0.0005 ,uvTemp.y) ).r;
+    col.g = texture( inputBuffer, vec2(uvTemp.x,uvTemp.y) ).g;
+    col.b = texture( inputBuffer, vec2(uvTemp.x-0.0005,uvTemp.y) ).b;
+
+
+    outputColor = vec4(col,1.0) ;
+
+    //outputColor = texture(inputBuffer, uvTemp);
 }
