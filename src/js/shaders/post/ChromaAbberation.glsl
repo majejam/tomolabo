@@ -1,7 +1,7 @@
 uniform float u_force;
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
-    vec2 texel = 1.0 / resolution.xy;
+    vec2 texel = 1.0 / resolution;
     
     vec2 coords = (uv - 0.5) * 2.0;
     float coordDot = dot (coords, coords);
