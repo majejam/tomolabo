@@ -4,6 +4,7 @@
   "description": "EoY Landing",
   "main": "index.js",
   "dependencies": {
+    "camera-controls": "^1.25.3",
     "dat.gui": "^0.7.7",
     "postprocessing": "^6.19.0",
     "three": "^0.124.0",
