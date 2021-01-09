@@ -1,14 +1,17 @@
 import Raf from '../utils/RAF.js'
 import GUI from '../utils/GUI.js'
+import Camera from './Camera'
 import viewport from '../utils/Viewport.js'
 import * as THREE from 'three'
 export default class Engine {
-  constructor(el) {
+  constructor(el, hasCamera = false) {
     this.$el = el
     this.scene = null
     this.camera = null
     this.renderer = null
     this.THREE = THREE
+
+    this.$hasCamera = hasCamera
 
     this._update = this.update.bind(this)
     this._onResize = this.onResize.bind(this)
@@ -25,25 +28,24 @@ export default class Engine {
 
     this.onResize()
 
+    if (this.$hasCamera) new Camera(this)
+
     this.setEvents()
   }
 
   destroy() {
     this.removeEvents()
-
-    Camera.destroy()
-    PostProcessing.destroy()
   }
 
   setupCamera() {
     this.camera = new THREE.PerspectiveCamera(65, viewport.width / viewport.height, 0.1, 10000)
-    this.camera.position.z = 100
+    this.camera.position.z = 2
   }
 
   setupScene() {
     this.scene = new THREE.Scene()
     const geometry = new THREE.BoxGeometry(1, 1, 1)
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+    const material = new THREE.MeshBasicMaterial({ color: 0x857896 })
     const cube = new THREE.Mesh(geometry, material)
     this.scene.add(cube)
   }
@@ -52,10 +54,10 @@ export default class Engine {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.$el,
       scene: this.scene,
-      antialias: false,
+      antialias: true,
     })
 
-    this.renderer.setClearColor(0xffffff, 1)
+    this.scene.background = new THREE.Color(0xffffff)
   }
 
   onResize() {
