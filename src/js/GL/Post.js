@@ -4,7 +4,7 @@ import * as POST from 'postprocessing'
 import GUI from '../utils/GUI.js'
 
 export default class Post {
-  constructor(Engine, fragment, name, uniforms, blendMode = 13 ) {
+  constructor(Engine, fragment, name, uniforms, blendMode = 13) {
     this.$engine = Engine
     this.$fragment = fragment
     this.$name = name
@@ -39,6 +39,7 @@ export default class Post {
     for (const key in this.$uniforms) {
       GUI.addValue(this.$name, `${key}`, {
         default: this.$uniforms[key].value,
+        step: 0.1,
       })
     }
   }
