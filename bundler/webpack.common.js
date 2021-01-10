@@ -1,6 +1,14 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const pages = ['sh-1', 'sh-2', 'ps-1', 'ps-2', 'ps-3', 'ps-4', 'ps-5', 'ps-6']
+
+let pagesPlugins = pages.map(name => {
+  return new HtmlWebpackPlugin({
+    template: path.resolve(__dirname, `../src/pages/${name}.html`), // relative path to the HTML files
+    filename: `${name}.html`, // output HTML files
+  })
+})
 
 module.exports = {
   devtool: 'source-map',
@@ -8,9 +16,12 @@ module.exports = {
     new CopyWebpackPlugin([{ from: 'static' }]),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, '../src/index.html'),
+      chunks: [`main`],
     }),
-  ],
-  entry: './src/index.js',
+  ].concat(pagesPlugins),
+  entry: {
+    main: './src/index.js',
+  },
   output: {
     filename: 'bundle.[hash].js',
     path: path.resolve(__dirname, '../dist'),
