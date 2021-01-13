@@ -1,7 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const pages = ['sh-1', 'sh-2', 'ps-1', 'ps-2', 'ps-3', 'ps-4', 'ps-5', 'ps-6']
+const pages = ['sh-1', 'sh-2', 'sh-3', 'ps-1', 'ps-2', 'ps-3', 'ps-4', 'ps-5', 'ps-6']
 
 let pagesPlugins = pages.map(name => {
   return new HtmlWebpackPlugin({
