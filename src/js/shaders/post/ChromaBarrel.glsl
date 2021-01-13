@@ -26,8 +26,9 @@ vec4 spectrum_offset( float t ) {
   ret = vec4(lo,1.0,hi, 1.) * vec4(1.0-w, w, 1.0-w, 1.);
   return pow( ret, vec4(1.0/2.2) );
 }
+
 const float max_distort = 1.2;
-const int num_iter = 50;
+const int num_iter = 100;
 const float reci_num_iter_f = 1.0 / float(num_iter);
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
