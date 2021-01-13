@@ -13,9 +13,18 @@ import Glitch from '../shaders/post/Glitch.glsl'
 
 export default {
   init() {
-    new Post(new Engine(document.querySelector('.ps-4-c'), true), Glitch, 'ps-4', {
-      u_amount: new THREE.Uniform(1.0),
-    })
+    new Post(
+      new Engine(document.querySelector('.ps-4-c'), {
+        camera: true,
+        color: 0xffffff,
+        cube: true,
+      }),
+      Glitch,
+      'ps-4',
+      {
+        u_amount: new THREE.Uniform(1.0),
+      }
+    )
   },
   finalize() {
     // JavaScript to be fired on the home page, after the init JS

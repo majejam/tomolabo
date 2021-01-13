@@ -29,6 +29,7 @@ export default {
         u_color_opacity: { value: 0.1 },
       },
       {
+        frame: true,
         viewport_factor: 4,
         hide_gui: false,
       }
