@@ -17,7 +17,7 @@ vec2 brownConradyDistortion(vec2 uv)
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
 
     vec2 uvTemp = uv;
-    uvTemp.y = 1.0 - uvTemp.y;
+    uvTemp.y = uvTemp.y;
     uvTemp = uvTemp * 2.0 - 1.0;
 
     uvTemp = brownConradyDistortion(uvTemp);
