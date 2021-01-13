@@ -4,16 +4,29 @@ import Raf from '../utils/RAF.js'
 import viewport from '../utils/Viewport.js'
 
 export default class Shader {
-  constructor(engine, vert, frag, name, uniforms, params) {
+  constructor(
+    engine,
+    vert,
+    frag,
+    name,
+    uniforms,
+    params = {
+      frame: true,
+      terrain: false,
+      viewport_factor: 1,
+      hide_gui: false,
+    }
+  ) {
     this.$engine = engine
     this.$vert = vert
     this.$frag = frag
     this.$name = name
     this.$uniforms = uniforms
+    this.$params = params
 
-    this.viewport_factor = params.viewport_factor
+    this.viewport_factor = this.$params.viewport_factor
 
-    if (params.hide_gui) GUI.dat.GUI.toggleHide()
+    if (this.$params.hide_gui) GUI.dat.GUI.toggleHide()
 
     this.defaultUniforms = {
       u_time: { value: 0.0 },
@@ -36,7 +49,9 @@ export default class Shader {
   init() {
     this.setUniforms()
 
-    this.setShaderPlane()
+    if (this.$params.frame) this.setShaderPlane()
+
+    if (this.$params.terrain) this.setTerrainPlane()
 
     this.setEvents()
   }
@@ -47,6 +62,9 @@ export default class Shader {
     for (const key in this.$uniforms) {
       GUI.addValue(this.$name, `${key}`, {
         default: this.$uniforms[key].value,
+        min: this.$uniforms[key].min ? this.$uniforms[key].min : 0,
+        max: this.$uniforms[key].max ? this.$uniforms[key].max : 1,
+        type: this.$uniforms[key].type ? this.$uniforms[key].type : 'other',
       })
     }
   }
@@ -60,6 +78,25 @@ export default class Shader {
         fragmentShader: this.$frag,
       })
     )
+    console.log('cc')
+    this.$engine.scene.add(this.plane)
+  }
+
+  setTerrainPlane() {
+    let buff = new THREE.PlaneBufferGeometry(3000, 3000, 128, 128)
+    buff.rotateX(-Math.PI / 2)
+    this.plane = new THREE.Mesh(
+      buff,
+      new THREE.ShaderMaterial({
+        uniforms: { ...this.$uniforms, ...this.defaultUniforms },
+        vertexShader: this.$vert,
+        fragmentShader: this.$frag,
+        depthTest: false,
+      })
+    )
+
+    this.plane.position.y = 0
+    this.plane.position.z = 0
     this.$engine.scene.add(this.plane)
   }
 

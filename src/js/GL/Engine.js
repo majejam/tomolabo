@@ -4,14 +4,21 @@ import Camera from './Camera'
 import viewport from '../utils/Viewport.js'
 import * as THREE from 'three'
 export default class Engine {
-  constructor(el, hasCamera = false) {
+  constructor(
+    el,
+    params = {
+      camera: false,
+      color: 0xffffff,
+      cube: false,
+    }
+  ) {
     this.$el = el
     this.scene = null
-    this.camera = null
+
+    console.log(params)
+    this.$params = params
     this.renderer = null
     this.THREE = THREE
-
-    this.$hasCamera = hasCamera
 
     this._update = this.update.bind(this)
     this._onResize = this.onResize.bind(this)
@@ -24,11 +31,13 @@ export default class Engine {
 
     this.setupScene()
 
+    if (this.$params.cube) this.setupCube()
+
     this.setupRenderer()
 
     this.onResize()
 
-    if (this.$hasCamera) new Camera(this)
+    if (this.$params.camera) new Camera(this)
 
     this.setEvents()
   }
@@ -44,6 +53,9 @@ export default class Engine {
 
   setupScene() {
     this.scene = new THREE.Scene()
+  }
+
+  setupCube() {
     const geometry = new THREE.BoxGeometry(1, 1, 1)
     const material = new THREE.MeshBasicMaterial({ color: 0x857896 })
     const cube = new THREE.Mesh(geometry, material)
@@ -53,11 +65,14 @@ export default class Engine {
   setupRenderer() {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.$el,
+      powerPreference: 'high-performance',
       scene: this.scene,
-      antialias: true,
+      antialias: false,
+      stencil: false,
+      depth: false,
     })
 
-    this.scene.background = new THREE.Color(0xffffff)
+    this.scene.background = new THREE.Color(this.$params.color)
   }
 
   onResize() {
